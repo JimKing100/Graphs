@@ -4,6 +4,7 @@ from world import World
 
 import random
 from ast import literal_eval
+from heapq import heappop, heappush
 
 
 def get_exits(room_id):
@@ -13,6 +14,41 @@ def get_exits(room_id):
     exits = traversal_graph[room_id]
     return exits
 
+
+def heuristic(start_room, end_room):
+    return abs(start_room.x - end_room.x) + abs(start_room.y - end_room.y)
+
+
+def astar(room_id):
+    open = []
+    closed = []
+
+    open.append(room_id)
+
+    while len(open) > 0:
+        open.sort()
+        current_node = open.pop(0)
+        closed.append(current_node)
+
+        for exit in get_exits(current_node):
+            if traversal_graph[current_node][exit] == '?':
+                path = []
+                while traversal_graph[current_node][exit] != room_id:
+                    path.append(traversal_graph[current_node][exit])
+                    # current_node = player.travel(opposite[exit])
+                return path[::-1]
+
+        for exit in get_exits():
+            if traversal_graph[current_node][exit] in closed:
+                continue
+
+        g = heuristic(neighbor_id, current_node)
+        h = heuristic(neighbor_id, end_id)
+        f = g + h
+        # if (room_id in open) and f >= f):
+            # open.append(room_id)
+
+    return None
 
 def bfs(room_id):
     """

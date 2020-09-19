@@ -1,6 +1,10 @@
+import random
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -42,11 +46,28 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
+
+        if num_users <= avg_friendships:
+            print('The number of users must be greater than the average number of friendships.')
+            return
 
         # Add users
 
+        for i in range(num_users):
+            self.add_user(i)
+
         # Create friendships
+
+        populate_friendships = []
+        for user_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
+                populate_friendships.append((user_id, friend_id))
+
+        random.shuffle(populate_friendships)
+
+        for i in range(num_users * avg_friendships // 2):
+            friendship = populate_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -58,7 +79,17 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        queue = [user_id]
+        visited[user_id] = [user_id]
+        while len(queue) > 0:
+            node = queue.pop()
+            friends = self.friendships[node]
+            for friend in friends:
+                if not friend in visited:
+                    visited[friend] = visited[node] + [friend]
+                    queue.append(friend)
+
         return visited
 
 
